@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, Eye, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -7,6 +7,15 @@ import Footer from '../components/Footer';
 
 const AdminBlogPage = () => {
   const navigate = useNavigate();
+  
+  // Check authentication
+  useEffect(() => {
+    const isAdmin = sessionStorage.getItem('jolihunt_admin');
+    if (!isAdmin) {
+      toast.error('Please login to access admin panel');
+      navigate('/admin/login');
+    }
+  }, [navigate]);
   const [formData, setFormData] = useState({
     title: '',
     excerpt: '',

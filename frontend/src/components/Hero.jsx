@@ -54,8 +54,8 @@ const Hero = () => {
         }} />
       </div>
 
-      {/* Floating mascot - positioned lower, away from header */}
-      <div className="absolute top-32 right-5 lg:top-40 lg:right-10 w-32 h-44 lg:w-48 lg:h-64 z-20 opacity-95 animate-float">
+      {/* Floating mascot - positioned lower, hidden on mobile to prevent overlap */}
+      <div className="hidden md:block absolute top-32 right-5 lg:top-40 lg:right-10 w-32 h-44 lg:w-48 lg:h-64 z-20 opacity-95 animate-float">
         <Mascot animate={true} size="xl" />
       </div>
 

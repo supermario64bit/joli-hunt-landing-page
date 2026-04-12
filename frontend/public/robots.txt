@@ -1,0 +1,10 @@
+# robots.txt for JoliHunt
+User-agent: *
+Allow: /
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://application-hub-29.preview.emergentagent.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1

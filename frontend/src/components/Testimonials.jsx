@@ -29,14 +29,14 @@ const Testimonials = () => {
     };
   }, []);
 
-  // Auto-scroll effect
+  // Auto-scroll effect - SLOWER
   useEffect(() => {
     if (!scrollContainerRef.current || isPaused) return;
 
     const scrollInterval = setInterval(() => {
       if (scrollContainerRef.current) {
         const container = scrollContainerRef.current;
-        const scrollAmount = 2; // Smooth slow scroll
+        const scrollAmount = 0.5; // Slower smooth scroll
         
         container.scrollLeft += scrollAmount;
         
