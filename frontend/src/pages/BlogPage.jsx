@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Calendar, User, ArrowRight, Search } from 'lucide-react';
+import { Calendar, User, ArrowRight, Search, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 // Mock blog data
 const blogPosts = [
@@ -70,6 +72,7 @@ const blogPosts = [
 const categories = ["All", "Job Search Tips", "Productivity", "Interview Tips", "Tools & Software", "Career Growth"];
 
 const BlogPage = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -82,17 +85,35 @@ const BlogPage = () => {
 
   return (
     <div className="min-h-screen bg-[#FAFAF8]">
+      <SEO 
+        title="JoliHunt Blog - Job Search Tips & Career Advice"
+        description="Expert tips on job applications, resume building, interview preparation, and career growth. Learn how to organize your job search effectively."
+        keywords="job search tips, resume tips, interview preparation, career advice, job application tracker, job hunting strategies"
+      />
       <Navbar />
       
       {/* Hero Section */}
       <section className="pt-32 pb-16 bg-gradient-to-b from-white to-[#FAFAF8]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1C1C1C] mb-6 animate-fade-in-up">
-            JoliHunt <span className="text-[#D4A017]">Blog</span>
-          </h1>
-          <p className="text-lg md:text-xl text-[#6B6B6B] max-w-2xl mx-auto mb-8 animate-fade-in-up delay-100">
-            Insights, tips, and strategies to help you organize your job search and land your dream role.
-          </p>
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="text-center flex-1">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1C1C1C] mb-6 animate-fade-in-up">
+                JoliHunt <span className="text-[#D4A017]">Blog</span>
+              </h1>
+              <p className="text-lg md:text-xl text-[#6B6B6B] max-w-2xl mx-auto mb-8 animate-fade-in-up delay-100">
+                Insights, tips, and strategies to help you organize your job search and land your dream role.
+              </p>
+            </div>
+            
+            {/* Create Blog Button - Admin Only */}
+            <button
+              onClick={() => navigate('/admin/blog/create')}
+              className="hidden lg:flex items-center gap-2 bg-[#D4A017] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#B8860B] transition-all duration-200 hover:shadow-lg"
+            >
+              <Plus className="w-5 h-5" />
+              Create Post
+            </button>
+          </div>
 
           {/* Search Bar */}
           <div className="max-w-xl mx-auto relative animate-fade-in-up delay-200">

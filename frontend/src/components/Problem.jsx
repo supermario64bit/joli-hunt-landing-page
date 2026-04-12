@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FileSpreadsheet, CalendarX, HelpCircle } from 'lucide-react';
 import { problemCards } from '../data/mockData';
+import Mascot from './Mascot';
 
 const iconMap = {
   FileSpreadsheet: FileSpreadsheet,
@@ -34,8 +35,13 @@ const Problem = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-16 lg:py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+    <section ref={sectionRef} className="py-16 lg:py-24 bg-white relative">
+      {/* Mascot for this section */}
+      <div className="absolute top-10 left-10 hidden lg:block opacity-20">
+        <Mascot animate={false} size="lg" variant="default" />
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
         <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold text-[#1C1C1C] text-center mb-12 lg:mb-16 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
           Sound familiar?
         </h2>

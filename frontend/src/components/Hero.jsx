@@ -54,9 +54,9 @@ const Hero = () => {
         }} />
       </div>
 
-      {/* Floating mascot */}
-      <div className="absolute top-20 right-10 w-24 h-32 hidden xl:block opacity-80">
-        <Mascot animate={true} />
+      {/* Floating mascot - larger and more visible */}
+      <div className="absolute top-10 right-5 lg:right-10 w-32 h-44 lg:w-48 lg:h-64 z-20 opacity-90">
+        <Mascot animate={true} size="xl" />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">

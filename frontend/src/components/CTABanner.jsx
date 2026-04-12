@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { toast } from 'sonner';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const CTABanner = () => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email) {
       toast.error('Please enter your email address');
@@ -21,12 +24,20 @@ const CTABanner = () => {
 
     setIsSubmitting(true);
     
-    // Simulate newsletter signup (mock)
-    setTimeout(() => {
+    try {
+      // Call backend API to save email
+      await axios.post(`${BACKEND_URL}/api/newsletter/subscribe`, { email });
       toast.success('🎉 Welcome! Check your inbox for next steps.');
       setEmail('');
+    } catch (error) {
+      if (error.response?.status === 400) {
+        toast.error('This email is already subscribed!');
+      } else {
+        toast.error('Something went wrong. Please try again.');
+      }
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (

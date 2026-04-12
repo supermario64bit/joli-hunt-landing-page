@@ -94,8 +94,6 @@ export const steps = [
 ];
 
 export const navLinks = [
-  { id: "features", label: "Features", href: "#features" },
-  { id: "how-it-works", label: "How It Works", href: "#how-it-works" },
   { id: "testimonials", label: "Testimonials", href: "#testimonials" },
   { id: "blog", label: "Blog", href: "/blog" },
   { id: "contact", label: "Contact", href: "#contact" }
