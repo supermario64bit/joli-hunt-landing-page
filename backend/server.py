@@ -395,7 +395,7 @@ async def forgot_password(data: ForgotPasswordRequest):
     })
     
     # Log reset link (in production, send email)
-    reset_link = f"https://application-hub-29.preview.emergentagent.com/reset-password?token={reset_token}"
+    reset_link = f"https://jolihunt-preview.preview.emergentagent.com/reset-password?token={reset_token}"
     logging.info(f"Password reset link for {email}: {reset_link}")
     
     return {"message": "If the email exists, a reset link will be sent"}
