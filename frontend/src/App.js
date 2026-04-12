@@ -6,9 +6,11 @@ import { Toaster } from "./components/ui/sonner";
 // Lazy load pages for better performance
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
+const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminBlogPage = lazy(() => import("./pages/AdminBlogPage"));
+const BlogManagement = lazy(() => import("./pages/BlogManagement"));
 const UserManagement = lazy(() => import("./pages/UserManagement"));
 
 // Loading component
@@ -29,9 +31,11 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:id" element={<BlogPostPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/blog/create" element={<AdminBlogPage />} />
+            <Route path="/admin/blog/manage" element={<BlogManagement />} />
             <Route path="/admin/users" element={<UserManagement />} />
           </Routes>
         </Suspense>

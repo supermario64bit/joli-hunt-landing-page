@@ -171,7 +171,8 @@ const BlogPage = () => {
               {filteredPosts.map((post, index) => (
                 <article
                   key={post.id}
-                  className={`bg-white rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in-up delay-${index * 100}`}
+                  onClick={() => navigate(`/blog/${post.id}`)}
+                  className={`bg-white rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in-up delay-${index * 100} cursor-pointer`}
                 >
                   {/* Image */}
                   <div className="h-48 overflow-hidden bg-gray-200">

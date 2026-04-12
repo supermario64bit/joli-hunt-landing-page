@@ -22,7 +22,8 @@ const AdminBlogPage = () => {
     category: 'Job Search Tips',
     author: '',
     readTime: '',
-    image: ''
+    image: '',
+    contentImages: [] // For images within content
   });
 
   const [isPreview, setIsPreview] = useState(false);
@@ -60,6 +61,17 @@ const AdminBlogPage = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, image: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -176,7 +188,7 @@ const AdminBlogPage = () => {
                 </div>
               </div>
 
-              {/* Read Time & Image Row */}
+              {/* Featured Image URL */}
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-[#1C1C1C] mb-2">
@@ -194,18 +206,33 @@ const AdminBlogPage = () => {
 
                 <div>
                   <label className="block text-sm font-semibold text-[#1C1C1C] mb-2">
-                    Featured Image URL
+                    Featured Image
                   </label>
-                  <input
-                    type="url"
-                    name="image"
-                    value={formData.image}
-                    onChange={handleChange}
-                    placeholder="https://example.com/image.jpg"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#D4A017] focus:ring-2 focus:ring-[#D4A017] focus:ring-opacity-20 outline-none transition-all"
-                  />
+                  <label className="cursor-pointer inline-block w-full">
+                    <div className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-[#FAFAF8] hover:bg-gray-100 transition-all text-center">
+                      {formData.image ? '✓ Image Uploaded' : '📷 Upload Image'}
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
                 </div>
               </div>
+
+              {/* Image Preview */}
+              {formData.image && (
+                <div className="mt-4">
+                  <p className="text-sm font-semibold text-[#1C1C1C] mb-2">Image Preview:</p>
+                  <img
+                    src={formData.image}
+                    alt="Preview"
+                    className="max-w-md rounded-lg border-2 border-gray-200"
+                  />
+                </div>
+              )}
 
               {/* Submit Button */}
               <button
