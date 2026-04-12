@@ -25,21 +25,21 @@ export const features = [
   {
     id: 1,
     title: "Track Every Application",
-    description: "See all your applications at a glance. Know exactly how many are active, in screening, or waiting for your response.",
+    description: "See all your applications at a glance. Monitor status changes from Applied to Interview to Offer in real-time.",
     position: "left",
     mockupType: "stats"
   },
   {
     id: 2,
     title: "Never Miss an Interview",
-    description: "Get a clear view of upcoming interviews with visual reminders. TODAY badges keep you prepared and on time.",
+    description: "Get a clear view of upcoming interviews with visual reminders. TODAY badges and calendar integration keep you prepared.",
     position: "right",
     mockupType: "interviews"
   },
   {
     id: 3,
-    title: "See Your Pipeline at a Glance",
-    description: "Visualize your entire job search journey. Watch applications flow from initial contact to final offer.",
+    title: "Visualize Your Progress",
+    description: "Watch your job search pipeline flow from application to offer. See exactly where each opportunity stands.",
     position: "left",
     mockupType: "pipeline"
   }
