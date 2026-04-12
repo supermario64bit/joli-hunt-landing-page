@@ -98,14 +98,48 @@ Fully responsive job search tracker SaaS landing page with modern design, SEO op
 - `/blog` - Blog listing
 - `/admin/blog/create` - Blog creation
 
+## API Contracts
+
+### Authentication APIs
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login user (sets httpOnly cookies)
+- `POST /api/auth/logout` - Logout user (requires auth)
+- `GET /api/auth/me` - Get current user (requires auth)
+- `POST /api/auth/refresh` - Refresh access token
+- `POST /api/auth/forgot-password` - Request password reset
+- `POST /api/auth/reset-password` - Reset password with token
+
+### Blog APIs
+- `GET /api/blog/posts` - Get all posts (public, supports ?category=X&search=Y)
+- `GET /api/blog/posts/{id}` - Get single post (public)
+- `POST /api/blog/posts` - Create post (admin only)
+- `PUT /api/blog/posts/{id}` - Update post (admin only)
+- `DELETE /api/blog/posts/{id}` - Delete post (admin only)
+
+### User Management APIs
+- `GET /api/users` - Get all users (admin only)
+- `POST /api/users` - Create user (admin only)
+- `PUT /api/users/{id}` - Update user (admin only)
+- `DELETE /api/users/{id}` - Delete user (admin only)
+
+### Newsletter APIs
+- `POST /api/newsletter/subscribe` - Subscribe email (public)
+- `GET /api/newsletter/subscribers` - Get subscribers (admin only)
+
+## Security Features
+- JWT-based authentication with httpOnly cookies
+- Bcrypt password hashing
+- Brute force protection (5 attempts = 15 min lockout)
+- Password reset with time-limited tokens
+- Role-based access control (admin/user)
+
 ## Next Steps
-1. Move blog posts from localStorage to MongoDB
-2. Add admin authentication
-3. Create individual blog post pages
-4. Generate sitemap.xml
-5. Add robots.txt
-6. More mascot states for other sections
-7. A/B test CTAs
+1. ✅ Backend authentication complete
+2. ✅ MongoDB schemas implemented
+3. Connect React frontend to backend APIs
+4. Migrate localStorage data to MongoDB
+5. More mascot states for other sections
+6. A/B test CTAs
 
 ## Brand Identity
 - Mascot: Yellow "J" character (#D4A017)

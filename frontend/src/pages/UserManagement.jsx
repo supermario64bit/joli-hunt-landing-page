@@ -1,89 +1,108 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Edit, Trash2, Upload } from 'lucide-react';
+import { ArrowLeft, Plus, Edit, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '../context/AuthContext';
+import { userAPI } from '../services/api';
 
 const UserManagement = () => {
   const navigate = useNavigate();
+  const { user, loading, isAdmin } = useAuth();
   const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
-    role: 'User',
-    photo: ''
+    password: '',
+    role: 'user'
   });
 
   useEffect(() => {
-    const isAdmin = sessionStorage.getItem('jolihunt_admin');
-    if (!isAdmin) {
-      toast.error('Please login to access admin panel');
+    if (!loading && (!user || !isAdmin)) {
+      toast.error('Please login as admin to access this page');
       navigate('/admin/login');
       return;
     }
 
-    // Load users from localStorage
-    const savedUsers = JSON.parse(localStorage.getItem('jolihunt_users') || '[]');
-    setUsers(savedUsers);
-  }, [navigate]);
+    if (user && isAdmin) {
+      fetchUsers();
+    }
+  }, [user, loading, isAdmin, navigate]);
 
-  const handleSubmit = (e) => {
+  const fetchUsers = async () => {
+    setLoadingUsers(true);
+    try {
+      const usersData = await userAPI.getAllUsers();
+      setUsers(usersData);
+    } catch (error) {
+      toast.error('Failed to load users');
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.email || !formData.phone) {
+    if (!formData.name || !formData.email || (!editingUser && !formData.password)) {
       toast.error('Please fill all required fields');
       return;
     }
 
-    const newUser = {
-      ...formData,
-      id: editingUser ? editingUser.id : Date.now(),
-      createdAt: editingUser ? editingUser.createdAt : new Date().toISOString()
-    };
+    try {
+      if (editingUser) {
+        // Update user
+        const updateData = { name: formData.name, email: formData.email, role: formData.role };
+        if (formData.password) {
+          updateData.password = formData.password;
+        }
+        await userAPI.updateUser(editingUser.id, updateData);
+        toast.success('User updated successfully!');
+      } else {
+        // Create user
+        await userAPI.createUser(formData);
+        toast.success('User added successfully!');
+      }
 
-    let updatedUsers;
-    if (editingUser) {
-      updatedUsers = users.map(u => u.id === editingUser.id ? newUser : u);
-      toast.success('User updated successfully!');
-    } else {
-      updatedUsers = [...users, newUser];
-      toast.success('User added successfully!');
+      fetchUsers();
+      setShowModal(false);
+      setEditingUser(null);
+      setFormData({ name: '', email: '', password: '', role: 'user' });
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to save user');
     }
-
-    localStorage.setItem('jolihunt_users', JSON.stringify(updatedUsers));
-    setUsers(updatedUsers);
-    setShowModal(false);
-    setEditingUser(null);
-    setFormData({ name: '', email: '', phone: '', role: 'User', photo: '' });
   };
 
   const handleEdit = (user) => {
     setEditingUser(user);
-    setFormData(user);
+    setFormData({ name: user.name, email: user.email, password: '', role: user.role });
     setShowModal(true);
   };
 
-  const handleDelete = (userId) => {
+  const handleDelete = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
-      const updatedUsers = users.filter(u => u.id !== userId);
-      localStorage.setItem('jolihunt_users', JSON.stringify(updatedUsers));
-      setUsers(updatedUsers);
-      toast.success('User deleted successfully!');
+      try {
+        await userAPI.deleteUser(userId);
+        setUsers(users.filter(u => u.id !== userId));
+        toast.success('User deleted successfully!');
+      } catch (error) {
+        toast.error(error.response?.data?.detail || 'Failed to delete user');
+      }
     }
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, photo: reader.result });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  if (loading || loadingUsers) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#D4A017] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[#6B6B6B] font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAF8]">
@@ -100,16 +119,16 @@ const UserManagement = () => {
               </button>
               <div>
                 <h1 className="text-2xl font-black text-[#1C1C1C]">User Management</h1>
-                <p className="text-[#6B6B6B] text-sm">Manage system users</p>
+                <p className="text-[#6B6B6B] text-sm">Manage application users</p>
               </div>
             </div>
             <button
               onClick={() => {
-                setEditingUser(null);
-                setFormData({ name: '', email: '', phone: '', role: 'User', photo: '' });
                 setShowModal(true);
+                setEditingUser(null);
+                setFormData({ name: '', email: '', password: '', role: 'user' });
               }}
-              className="flex items-center gap-2 bg-[#D4A017] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#B8860B] transition-all"
+              className="flex items-center gap-2 bg-[#D4A017] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#B8860B] transition-all shadow-lg"
             >
               <Plus className="w-5 h-5" />
               Add User
@@ -122,154 +141,156 @@ const UserManagement = () => {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         {users.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-[#6B6B6B] text-lg">No users yet. Click "Add User" to create one.</p>
+            <p className="text-[#6B6B6B] text-lg mb-4">No users yet.</p>
+            <button
+              onClick={() => setShowModal(true)}
+              className="bg-[#D4A017] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#B8860B] transition-all"
+            >
+              Add First User
+            </button>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {users.map(user => (
-              <div key={user.id} className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all border-2 border-gray-100">
-                {/* User Photo */}
-                <div className="flex justify-center mb-4">
-                  {user.photo ? (
-                    <img
-                      src={user.photo}
-                      alt={user.name}
-                      className="w-24 h-24 rounded-full object-cover border-4 border-[#D4A017]"
-                    />
-                  ) : (
-                    <div className="w-24 h-24 rounded-full bg-[#D4A017] flex items-center justify-center text-white text-3xl font-black">
-                      {user.name.charAt(0)}
-                    </div>
-                  )}
-                </div>
-
-                {/* User Info */}
-                <div className="text-center mb-4">
-                  <h3 className="text-xl font-black text-[#1C1C1C] mb-1">{user.name}</h3>
-                  <p className="text-sm text-[#6B6B6B] mb-1">{user.email}</p>
-                  <p className="text-sm text-[#6B6B6B] mb-2">{user.phone}</p>
-                  <span className="inline-block bg-[#D4A017] text-white px-3 py-1 rounded-full text-xs font-bold">
-                    {user.role}
-                  </span>
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleEdit(user)}
-                    className="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-600 transition-all"
-                  >
-                    <Edit className="w-4 h-4" />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(user.id)}
-                    className="flex-1 flex items-center justify-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition-all"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-[#FAFAF8] border-b-2 border-[#D4A017]/20">
+                <tr>
+                  <th className="px-6 py-4 text-left text-sm font-black text-[#1C1C1C]">Name</th>
+                  <th className="px-6 py-4 text-left text-sm font-black text-[#1C1C1C]">Email</th>
+                  <th className="px-6 py-4 text-left text-sm font-black text-[#1C1C1C]">Role</th>
+                  <th className="px-6 py-4 text-left text-sm font-black text-[#1C1C1C]">Created</th>
+                  <th className="px-6 py-4 text-right text-sm font-black text-[#1C1C1C]">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {users.map((u) => (
+                  <tr key={u.id} className="hover:bg-[#FAFAF8] transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-[#D4A017] flex items-center justify-center text-white font-black">
+                          {u.name.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="font-semibold text-[#1C1C1C]">{u.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-[#6B6B6B]">{u.email}</td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                          u.role === 'admin'
+                            ? 'bg-purple-100 text-purple-700'
+                            : 'bg-blue-100 text-blue-700'
+                        }`}
+                      >
+                        {u.role.charAt(0).toUpperCase() + u.role.slice(1)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-[#6B6B6B] text-sm">
+                      {new Date(u.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => handleEdit(u)}
+                          className="p-2 text-[#D4A017] hover:bg-[#D4A017] hover:bg-opacity-10 rounded-lg transition-all"
+                        >
+                          <Edit className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(u.id)}
+                          disabled={u.role === 'admin' && u.id === user.id}
+                          className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-6">
+          <div className="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl">
             <h2 className="text-2xl font-black text-[#1C1C1C] mb-6">
               {editingUser ? 'Edit User' : 'Add New User'}
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Photo Upload */}
-              <div className="text-center">
-                <div className="flex justify-center mb-4">
-                  {formData.photo ? (
-                    <img src={formData.photo} alt="Preview" className="w-32 h-32 rounded-full object-cover border-4 border-[#D4A017]" />
-                  ) : (
-                    <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center">
-                      <Upload className="w-12 h-12 text-[#6B6B6B]" />
-                    </div>
-                  )}
-                </div>
-                <label className="cursor-pointer inline-block bg-[#D4A017] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#B8860B] transition-all">
-                  Upload Photo
-                  <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                </label>
-              </div>
-
-              {/* Name */}
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-[#1C1C1C] mb-2">Name *</label>
+                <label className="block text-sm font-semibold text-[#1C1C1C] mb-2">
+                  Name *
+                </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#D4A017] outline-none"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#D4A017] focus:ring-2 focus:ring-[#D4A017] focus:ring-opacity-20 outline-none transition-all"
                   required
                 />
               </div>
 
-              {/* Email */}
               <div>
-                <label className="block text-sm font-bold text-[#1C1C1C] mb-2">Email *</label>
+                <label className="block text-sm font-semibold text-[#1C1C1C] mb-2">
+                  Email *
+                </label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#D4A017] outline-none"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#D4A017] focus:ring-2 focus:ring-[#D4A017] focus:ring-opacity-20 outline-none transition-all"
                   required
                 />
               </div>
 
-              {/* Phone */}
               <div>
-                <label className="block text-sm font-bold text-[#1C1C1C] mb-2">Phone *</label>
+                <label className="block text-sm font-semibold text-[#1C1C1C] mb-2">
+                  Password {editingUser ? '(leave blank to keep current)' : '*'}
+                </label>
                 <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#D4A017] outline-none"
-                  required
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#D4A017] focus:ring-2 focus:ring-[#D4A017] focus:ring-opacity-20 outline-none transition-all"
+                  required={!editingUser}
                 />
               </div>
 
-              {/* Role */}
               <div>
-                <label className="block text-sm font-bold text-[#1C1C1C] mb-2">Role</label>
+                <label className="block text-sm font-semibold text-[#1C1C1C] mb-2">
+                  Role *
+                </label>
                 <select
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#D4A017] outline-none"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#D4A017] focus:ring-2 focus:ring-[#D4A017] focus:ring-opacity-20 outline-none transition-all"
                 >
-                  <option>User</option>
-                  <option>Editor</option>
-                  <option>Admin</option>
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
                 </select>
               </div>
 
-              {/* Buttons */}
-              <div className="flex gap-4">
+              <div className="flex gap-3 pt-4">
                 <button
                   type="button"
                   onClick={() => {
                     setShowModal(false);
                     setEditingUser(null);
-                    setFormData({ name: '', email: '', phone: '', role: 'User', photo: '' });
+                    setFormData({ name: '', email: '', password: '', role: 'user' });
                   }}
-                  className="flex-1 bg-gray-200 text-[#1C1C1C] px-6 py-3 rounded-lg font-bold hover:bg-gray-300 transition-all"
+                  className="flex-1 px-6 py-3 border-2 border-gray-200 text-[#6B6B6B] rounded-lg font-bold hover:bg-gray-50 transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-[#D4A017] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#B8860B] transition-all"
+                  className="flex-1 px-6 py-3 bg-[#D4A017] text-white rounded-lg font-bold hover:bg-[#B8860B] transition-all"
                 >
-                  {editingUser ? 'Update' : 'Create'}
+                  {editingUser ? 'Update' : 'Add'} User
                 </button>
               </div>
             </form>

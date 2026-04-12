@@ -2,36 +2,65 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit, Trash2, Eye } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '../context/AuthContext';
+import { blogAPI } from '../services/api';
 
 const BlogManagement = () => {
   const navigate = useNavigate();
+  const { user, loading, isAdmin } = useAuth();
   const [blogs, setBlogs] = useState([]);
+  const [loadingBlogs, setLoadingBlogs] = useState(true);
 
   useEffect(() => {
-    const isAdmin = sessionStorage.getItem('jolihunt_admin');
-    if (!isAdmin) {
-      toast.error('Please login to access admin panel');
+    if (!loading && (!user || !isAdmin)) {
+      toast.error('Please login as admin to access this page');
       navigate('/admin/login');
       return;
     }
 
-    // Load blogs from localStorage
-    const savedBlogs = JSON.parse(localStorage.getItem('jolihunt_blog_posts') || '[]');
-    setBlogs(savedBlogs);
-  }, [navigate]);
+    if (user && isAdmin) {
+      fetchBlogs();
+    }
+  }, [user, loading, isAdmin, navigate]);
 
-  const handleDelete = (blogId) => {
+  const fetchBlogs = async () => {
+    setLoadingBlogs(true);
+    try {
+      const posts = await blogAPI.getAllPosts();
+      setBlogs(posts);
+    } catch (error) {
+      toast.error('Failed to load blog posts');
+    } finally {
+      setLoadingBlogs(false);
+    }
+  };
+
+  const handleDelete = async (blogId) => {
     if (window.confirm('Are you sure you want to delete this blog post?')) {
-      const updatedBlogs = blogs.filter(b => b.id !== blogId);
-      localStorage.setItem('jolihunt_blog_posts', JSON.stringify(updatedBlogs));
-      setBlogs(updatedBlogs);
-      toast.success('Blog post deleted successfully!');
+      try {
+        await blogAPI.deletePost(blogId);
+        setBlogs(blogs.filter(b => b.id !== blogId));
+        toast.success('Blog post deleted successfully!');
+      } catch (error) {
+        toast.error('Failed to delete blog post');
+      }
     }
   };
 
   const handleView = (blogId) => {
     navigate(`/blog/${blogId}`);
   };
+
+  if (loading || loadingBlogs) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#D4A017] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[#6B6B6B] font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAF8]">
@@ -48,7 +77,7 @@ const BlogManagement = () => {
               </button>
               <div>
                 <h1 className="text-2xl font-black text-[#1C1C1C]">Manage Blog Posts</h1>
-                <p className="text-[#6B6B6B] text-sm">Edit or delete existing posts</p>
+                <p className="text-[#6B6B6B] text-sm">View and delete existing posts</p>
               </div>
             </div>
           </div>
@@ -81,8 +110,8 @@ const BlogManagement = () => {
                         className="w-full h-32 object-cover rounded-lg"
                       />
                     ) : (
-                      <div className="w-full h-32 bg-gray-200 rounded-lg flex items-center justify-center">
-                        <span className="text-gray-400">No Image</span>
+                      <div className="w-full h-32 bg-gradient-to-br from-[#D4A017] to-[#B8860B] rounded-lg flex items-center justify-center">
+                        <span className="text-white text-2xl font-black">J</span>
                       </div>
                     )}
                   </div>
@@ -98,24 +127,30 @@ const BlogManagement = () => {
                       )}
                     </div>
                     <h3 className="text-xl font-black text-[#1C1C1C] mb-2">{blog.title}</h3>
-                    <p className="text-[#6B6B6B] text-sm line-clamp-2 mb-2">{blog.excerpt}</p>
-                    <p className="text-xs text-[#6B6B6B]">
-                      By {blog.author} • {blog.date}
-                    </p>
+                    <p className="text-[#6B6B6B] text-sm mb-2 line-clamp-2">{blog.excerpt}</p>
+                    <div className="flex items-center gap-4 text-xs text-[#6B6B6B]">
+                      <span>By {blog.author}</span>
+                      {blog.date && (
+                        <>
+                          <span>•</span>
+                          <span>{blog.date}</span>
+                        </>
+                      )}
+                    </div>
                   </div>
 
                   {/* Actions */}
-                  <div className="md:col-span-1 flex md:flex-col gap-2">
+                  <div className="md:col-span-1 flex md:flex-col gap-3">
                     <button
                       onClick={() => handleView(blog.id)}
-                      className="flex-1 flex items-center justify-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition-all"
+                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 border-2 border-[#D4A017] text-[#D4A017] rounded-lg hover:bg-[#D4A017] hover:text-white transition-all"
                     >
                       <Eye className="w-4 h-4" />
                       View
                     </button>
                     <button
                       onClick={() => handleDelete(blog.id)}
-                      className="flex-1 flex items-center justify-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition-all"
+                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
                     >
                       <Trash2 className="w-4 h-4" />
                       Delete

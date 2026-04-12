@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "./components/ui/sonner";
+import { AuthProvider } from "./context/AuthContext";
 
 // Lazy load pages for better performance
 const LandingPage = lazy(() => import("./pages/LandingPage"));
@@ -27,20 +28,22 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/blog/:id" element={<BlogPostPage />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/blog/create" element={<AdminBlogPage />} />
-            <Route path="/admin/blog/manage" element={<BlogManagement />} />
-            <Route path="/admin/users" element={<UserManagement />} />
-          </Routes>
-        </Suspense>
+        <AuthProvider>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog/:id" element={<BlogPostPage />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/blog/create" element={<AdminBlogPage />} />
+              <Route path="/admin/blog/manage" element={<BlogManagement />} />
+              <Route path="/admin/users" element={<UserManagement />} />
+            </Routes>
+          </Suspense>
+          <Toaster position="top-right" />
+        </AuthProvider>
       </BrowserRouter>
-      <Toaster position="top-right" />
     </div>
   );
 }

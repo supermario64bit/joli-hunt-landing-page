@@ -4,17 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useAuth } from '../context/AuthContext';
+import { blogAPI } from '../services/api';
 
 const AdminBlogPage = () => {
   const navigate = useNavigate();
+  const { user, loading, isAdmin } = useAuth();
   
-  useEffect(() => {
-    const isAdmin = sessionStorage.getItem('jolihunt_admin');
-    if (!isAdmin) {
-      toast.error('Please login to access admin panel');
-      navigate('/admin/login');
-    }
-  }, [navigate]);
   const [formData, setFormData] = useState({
     title: '',
     excerpt: '',
@@ -22,15 +18,23 @@ const AdminBlogPage = () => {
     category: 'Job Search Tips',
     author: '',
     readTime: '',
-    image: '',
-    contentImages: [] // For images within content
+    image: ''
   });
 
   const [isPreview, setIsPreview] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const categories = ["Job Search Tips", "Productivity", "Interview Tips", "Tools & Software", "Career Growth"];
 
-  const handleSubmit = (e) => {
+  // Redirect if not authenticated or not admin
+  useEffect(() => {
+    if (!loading && (!user || !isAdmin)) {
+      toast.error('Please login as admin to access this page');
+      navigate('/admin/login');
+    }
+  }, [user, loading, isAdmin, navigate]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Validation
@@ -39,21 +43,17 @@ const AdminBlogPage = () => {
       return;
     }
 
-    // For now, just show success and store in localStorage
-    // In production, this would call backend API
-    const blogPost = {
-      ...formData,
-      id: Date.now(),
-      date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-    };
+    setIsSubmitting(true);
 
-    // Get existing posts
-    const existingPosts = JSON.parse(localStorage.getItem('jolihunt_blog_posts') || '[]');
-    existingPosts.unshift(blogPost);
-    localStorage.setItem('jolihunt_blog_posts', JSON.stringify(existingPosts));
-
-    toast.success('✨ Blog post published successfully!');
-    setTimeout(() => navigate('/blog'), 1500);
+    try {
+      await blogAPI.createPost(formData);
+      toast.success('✨ Blog post published successfully!');
+      setTimeout(() => navigate('/blog'), 1500);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to create blog post');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -66,6 +66,12 @@ const AdminBlogPage = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size must be less than 5MB');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData({ ...formData, image: reader.result });
@@ -73,6 +79,17 @@ const AdminBlogPage = () => {
       reader.readAsDataURL(file);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#D4A017] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[#6B6B6B] font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAF8]">
@@ -84,11 +101,11 @@ const AdminBlogPage = () => {
           <div className="flex items-center justify-between mb-8">
             <div>
               <button
-                onClick={() => navigate('/blog')}
+                onClick={() => navigate('/admin/dashboard')}
                 className="flex items-center gap-2 text-[#6B6B6B] hover:text-[#D4A017] transition-colors mb-4"
               >
                 <ArrowLeft className="w-5 h-5" />
-                Back to Blog
+                Back to Dashboard
               </button>
               <h1 className="text-3xl md:text-4xl font-bold text-[#1C1C1C]">
                 {isPreview ? 'Preview Post' : 'Create New Blog Post'}
@@ -154,8 +171,9 @@ const AdminBlogPage = () => {
                 />
               </div>
 
-              {/* Category & Author Row */}
-              <div className="grid md:grid-cols-2 gap-6">
+              {/* Row 1: Category, Author, Read Time */}
+              <div className="grid md:grid-cols-3 gap-4">
+                {/* Category */}
                 <div>
                   <label className="block text-sm font-semibold text-[#1C1C1C] mb-2">
                     Category *
@@ -172,6 +190,7 @@ const AdminBlogPage = () => {
                   </select>
                 </div>
 
+                {/* Author */}
                 <div>
                   <label className="block text-sm font-semibold text-[#1C1C1C] mb-2">
                     Author *
@@ -186,10 +205,8 @@ const AdminBlogPage = () => {
                     required
                   />
                 </div>
-              </div>
 
-              {/* Featured Image URL */}
-              <div className="grid md:grid-cols-2 gap-6">
+                {/* Read Time */}
                 <div>
                   <label className="block text-sm font-semibold text-[#1C1C1C] mb-2">
                     Read Time
@@ -203,83 +220,78 @@ const AdminBlogPage = () => {
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#D4A017] focus:ring-2 focus:ring-[#D4A017] focus:ring-opacity-20 outline-none transition-all"
                   />
                 </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-[#1C1C1C] mb-2">
-                    Featured Image
-                  </label>
-                  <label className="cursor-pointer inline-block w-full">
-                    <div className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-[#FAFAF8] hover:bg-gray-100 transition-all text-center">
-                      {formData.image ? '✓ Image Uploaded' : '📷 Upload Image'}
-                    </div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
               </div>
 
-              {/* Image Preview */}
-              {formData.image && (
-                <div className="mt-4">
-                  <p className="text-sm font-semibold text-[#1C1C1C] mb-2">Image Preview:</p>
-                  <img
-                    src={formData.image}
-                    alt="Preview"
-                    className="max-w-md rounded-lg border-2 border-gray-200"
-                  />
-                </div>
-              )}
+              {/* Featured Image Upload */}
+              <div>
+                <label className="block text-sm font-semibold text-[#1C1C1C] mb-2">
+                  Featured Image
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#D4A017] focus:ring-2 focus:ring-[#D4A017] focus:ring-opacity-20 outline-none transition-all"
+                />
+                {formData.image && (
+                  <div className="mt-4">
+                    <img
+                      src={formData.image}
+                      alt="Preview"
+                      className="max-w-full h-48 object-cover rounded-lg"
+                    />
+                  </div>
+                )}
+              </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-[#D4A017] text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#B8860B] transition-all duration-200 hover:shadow-xl flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="w-full flex items-center justify-center gap-2 bg-[#D4A017] text-white px-6 py-4 rounded-lg font-bold text-lg hover:bg-[#B8860B] transition-all duration-200 hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save className="w-5 h-5" />
-                Publish Blog Post
+                {isSubmitting ? 'Publishing...' : 'Publish Post'}
               </button>
             </form>
           ) : (
-            /* Preview */
+            // Preview
             <div className="bg-white rounded-xl p-8 shadow-lg">
-              <div className="mb-6">
-                <span className="text-xs font-semibold text-[#D4A017] bg-[#D4A017] bg-opacity-10 px-3 py-1 rounded-full">
-                  {formData.category}
-                </span>
-                {formData.readTime && (
-                  <span className="text-xs text-[#6B6B6B] ml-3">{formData.readTime}</span>
-                )}
-              </div>
-              
               {formData.image && (
                 <img
                   src={formData.image}
                   alt={formData.title}
-                  className="w-full h-64 object-cover rounded-lg mb-6"
+                  className="w-full h-96 object-cover rounded-lg mb-6"
                 />
               )}
-              
-              <h1 className="text-3xl md:text-4xl font-bold text-[#1C1C1C] mb-4">
-                {formData.title || 'Your Title Here'}
-              </h1>
-              
-              <div className="flex items-center gap-4 text-sm text-[#6B6B6B] mb-6">
-                <span>By {formData.author || 'Author'}</span>
-                <span>•</span>
-                <span>{new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+
+              <div className="mb-4">
+                <span className="inline-block bg-[#D4A017] bg-opacity-10 text-[#D4A017] px-4 py-2 rounded-full text-sm font-semibold">
+                  {formData.category}
+                </span>
               </div>
-              
-              <p className="text-lg text-[#6B6B6B] mb-6 italic">
-                {formData.excerpt || 'Your excerpt will appear here...'}
+
+              <h1 className="text-4xl font-bold text-[#1C1C1C] mb-4">
+                {formData.title || 'Untitled Post'}
+              </h1>
+
+              <div className="flex items-center gap-4 text-[#6B6B6B] mb-6">
+                <span className="font-semibold">{formData.author || 'Author Name'}</span>
+                {formData.readTime && (
+                  <>
+                    <span>•</span>
+                    <span>{formData.readTime}</span>
+                  </>
+                )}
+              </div>
+
+              <p className="text-lg text-[#6B6B6B] italic mb-6">
+                {formData.excerpt || 'Excerpt will appear here...'}
               </p>
-              
-              <div className="prose prose-lg max-w-none">
+
+              <div className="prose max-w-none">
                 <p className="whitespace-pre-wrap text-[#1C1C1C] leading-relaxed">
-                  {formData.content || 'Your blog content will appear here...'}
+                  {formData.content || 'Content will appear here...'}
                 </p>
               </div>
             </div>

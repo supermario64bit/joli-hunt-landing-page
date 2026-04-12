@@ -1,38 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, User } from 'lucide-react';
 import { toast } from 'sonner';
-
-// HARDCODED ADMIN CREDENTIALS
-const ADMIN_CREDENTIALS = {
-  username: 'admin@jolihunt.com',
-  password: 'JoliHunt2026!'
-};
+import { useAuth } from '../context/AuthContext';
 
 const AdminLogin = () => {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login, user, loading } = useAuth();
 
-  const handleLogin = (e) => {
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!loading && user) {
+      navigate('/admin/dashboard');
+    }
+  }, [user, loading, navigate]);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API delay
-    setTimeout(() => {
-      if (
-        credentials.username === ADMIN_CREDENTIALS.username &&
-        credentials.password === ADMIN_CREDENTIALS.password
-      ) {
-        // Set session
-        sessionStorage.setItem('jolihunt_admin', 'true');
-        toast.success('Welcome back, Admin!');
-        navigate('/admin/blog/create');
-      } else {
-        toast.error('Invalid credentials. Please try again.');
-      }
-      setIsLoading(false);
-    }, 800);
+    const result = await login(credentials.username, credentials.password);
+
+    if (result.success) {
+      toast.success('Welcome back, Admin!');
+      navigate('/admin/dashboard');
+    } else {
+      toast.error(result.error || 'Invalid credentials. Please try again.');
+    }
+    
+    setIsLoading(false);
   };
 
   return (
