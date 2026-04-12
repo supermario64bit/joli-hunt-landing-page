@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { navLinks } from '../data/mockData';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,10 +18,23 @@ const Navbar = () => {
   }, []);
 
   const scrollToSection = (href) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (href.startsWith('#')) {
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setIsMobileMenuOpen(false);
+      }
+    } else {
+      navigate(href);
       setIsMobileMenuOpen(false);
+    }
+  };
+
+  const handleLogoClick = () => {
+    if (location.pathname !== '/') {
+      navigate('/');
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -30,25 +46,21 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="#hero" onClick={(e) => { e.preventDefault(); scrollToSection('#hero'); }} className="flex items-center">
+            <button onClick={handleLogoClick} className="flex items-center">
               <span className="text-2xl font-bold text-[#D4A017]">JOLIHUNT</span>
-            </a>
+            </button>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
             {navLinks.map((link) => (
-              <a
+              <button
                 key={link.id}
-                href={link.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection(link.href);
-                }}
+                onClick={() => scrollToSection(link.href)}
                 className="text-[#1C1C1C] hover:text-[#D4A017] font-medium transition-colors duration-200"
               >
                 {link.label}
-              </a>
+              </button>
             ))}
           </div>
 
@@ -76,17 +88,13 @@ const Navbar = () => {
         <div className="flex flex-col h-full pt-20 px-6">
           <div className="flex flex-col space-y-6">
             {navLinks.map((link) => (
-              <a
+              <button
                 key={link.id}
-                href={link.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection(link.href);
-                }}
-                className="text-[#1C1C1C] hover:text-[#D4A017] font-medium text-lg transition-colors duration-200"
+                onClick={() => scrollToSection(link.href)}
+                className="text-[#1C1C1C] hover:text-[#D4A017] font-medium text-lg transition-colors duration-200 text-left"
               >
                 {link.label}
-              </a>
+              </button>
             ))}
           </div>
           <div className="mt-8">

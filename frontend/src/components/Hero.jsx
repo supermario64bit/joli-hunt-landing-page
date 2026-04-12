@@ -73,13 +73,7 @@ const Hero = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in-up delay-300">
               <button className="bg-[#D4A017] text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#B8860B] transition-all duration-200 hover:shadow-xl transform hover:-translate-y-1 hover:scale-105">
-                Start Tracking Free
-              </button>
-              <button
-                onClick={() => scrollToSection('#how-it-works')}
-                className="border-2 border-[#D4A017] text-[#D4A017] px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#D4A017] hover:text-white transition-all duration-200 transform hover:-translate-y-1"
-              >
-                See how it works
+                Start Tracking - It's Free
               </button>
             </div>
           </div>
