@@ -19,6 +19,7 @@ const BlogPage = () => {
 
   useEffect(() => {
     fetchBlogPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, searchQuery]);
 
   const fetchBlogPosts = async () => {
