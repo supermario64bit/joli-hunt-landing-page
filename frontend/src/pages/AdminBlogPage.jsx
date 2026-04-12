@@ -8,7 +8,6 @@ import Footer from '../components/Footer';
 const AdminBlogPage = () => {
   const navigate = useNavigate();
   
-  // Check authentication
   useEffect(() => {
     const isAdmin = sessionStorage.getItem('jolihunt_admin');
     if (!isAdmin) {

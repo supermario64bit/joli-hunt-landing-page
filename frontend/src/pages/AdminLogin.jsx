@@ -102,17 +102,6 @@ const AdminLogin = () => {
               {isLoading ? 'Logging in...' : 'Login'}
             </button>
           </form>
-
-          {/* Credentials Display (for demo) */}
-          <div className="mt-6 p-4 bg-[#FAFAF8] rounded-lg border border-[#D4A017]/20">
-            <p className="text-xs font-bold text-[#6B6B6B] mb-2">Demo Credentials:</p>
-            <p className="text-xs text-[#1C1C1C]">
-              <strong>Username:</strong> admin@jolihunt.com
-            </p>
-            <p className="text-xs text-[#1C1C1C]">
-              <strong>Password:</strong> JoliHunt2026!
-            </p>
-          </div>
         </div>
 
         {/* Back to Home */}

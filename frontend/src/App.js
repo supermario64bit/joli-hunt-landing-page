@@ -7,7 +7,9 @@ import { Toaster } from "./components/ui/sonner";
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminBlogPage = lazy(() => import("./pages/AdminBlogPage"));
+const UserManagement = lazy(() => import("./pages/UserManagement"));
 
 // Loading component
 const PageLoader = () => (
@@ -28,7 +30,9 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/blog/create" element={<AdminBlogPage />} />
+            <Route path="/admin/users" element={<UserManagement />} />
           </Routes>
         </Suspense>
       </BrowserRouter>

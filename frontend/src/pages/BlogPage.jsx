@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, User, ArrowRight, Search, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -75,6 +75,13 @@ const BlogPage = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    // Check if user is admin
+    const adminStatus = sessionStorage.getItem('jolihunt_admin');
+    setIsAdmin(adminStatus === 'true');
+  }, []);
 
   const filteredPosts = blogPosts.filter(post => {
     const matchesCategory = selectedCategory === "All" || post.category === selectedCategory;
@@ -105,14 +112,16 @@ const BlogPage = () => {
               </p>
             </div>
             
-            {/* Create Blog Button - Admin Only */}
-            <button
-              onClick={() => navigate('/admin/blog/create')}
-              className="hidden lg:flex items-center gap-2 bg-[#D4A017] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#B8860B] transition-all duration-200 hover:shadow-lg"
-            >
-              <Plus className="w-5 h-5" />
-              Create Post
-            </button>
+            {/* Admin Create Blog Button - Only show if logged in */}
+            {isAdmin && (
+              <button
+                onClick={() => navigate('/admin/dashboard')}
+                className="hidden lg:flex items-center gap-2 bg-[#D4A017] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#B8860B] transition-all duration-200 hover:shadow-lg"
+              >
+                <Plus className="w-5 h-5" />
+                Admin Dashboard
+              </button>
+            )}
           </div>
 
           {/* Search Bar */}
