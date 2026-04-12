@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { testimonials } from '../data/mockData';
 
 const Testimonials = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const sectionRef = useRef(null);
   const scrollContainerRef = useRef(null);
 
@@ -29,19 +29,26 @@ const Testimonials = () => {
     };
   }, []);
 
-  const scroll = (direction) => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 400;
-      const newScroll = direction === 'left' 
-        ? scrollContainerRef.current.scrollLeft - scrollAmount
-        : scrollContainerRef.current.scrollLeft + scrollAmount;
-      
-      scrollContainerRef.current.scrollTo({
-        left: newScroll,
-        behavior: 'smooth'
-      });
-    }
-  };
+  // Auto-scroll effect
+  useEffect(() => {
+    if (!scrollContainerRef.current || isPaused) return;
+
+    const scrollInterval = setInterval(() => {
+      if (scrollContainerRef.current) {
+        const container = scrollContainerRef.current;
+        const scrollAmount = 2; // Smooth slow scroll
+        
+        container.scrollLeft += scrollAmount;
+        
+        // Reset to start when reaching end
+        if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
+          container.scrollLeft = 0;
+        }
+      }
+    }, 30);
+
+    return () => clearInterval(scrollInterval);
+  }, [isPaused]);
 
   return (
     <section id="testimonials" ref={sectionRef} className="py-16 lg:py-24 bg-[#FAFAF8] relative overflow-hidden">
@@ -69,78 +76,55 @@ const Testimonials = () => {
           </p>
         </div>
 
-        {/* Horizontal Scroll Container */}
-        <div className="relative">
-          {/* Left Arrow */}
-          <button
-            onClick={() => scroll('left')}
-            className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white rounded-full shadow-xl items-center justify-center hover:bg-[#D4A017] hover:text-white transition-all duration-200 hover:scale-110"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
+        {/* Auto-scrolling Container */}
+        <div
+          ref={scrollContainerRef}
+          className="flex gap-6 lg:gap-8 overflow-x-auto scrollbar-hide scroll-smooth pb-4 px-2"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          {/* Duplicate testimonials for infinite scroll effect */}
+          {[...testimonials, ...testimonials, ...testimonials].map((testimonial, index) => {
+            return (
+              <div
+                key={`${testimonial.id}-${index}`}
+                className="flex-shrink-0 w-80 lg:w-96 bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 relative cursor-pointer"
+              >
+                {/* Quote Mark Accent */}
+                <div className="absolute top-6 right-6 text-7xl text-[#D4A017] opacity-10 font-serif leading-none">
+                  "
+                </div>
 
-          {/* Right Arrow */}
-          <button
-            onClick={() => scroll('right')}
-            className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white rounded-full shadow-xl items-center justify-center hover:bg-[#D4A017] hover:text-white transition-all duration-200 hover:scale-110"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
+                {/* Quote */}
+                <p className="text-[#1C1C1C] leading-relaxed text-lg mb-6 relative z-10 italic">
+                  "{testimonial.quote}"
+                </p>
 
-          {/* Scrollable Cards */}
-          <div
-            ref={scrollContainerRef}
-            className="flex gap-6 lg:gap-8 overflow-x-auto scrollbar-hide scroll-smooth pb-4 px-2"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {testimonials.map((testimonial, index) => {
-              const delay = `delay-${(index + 2) * 100}`;
-              return (
-                <div
-                  key={testimonial.id}
-                  className={`flex-shrink-0 w-80 lg:w-96 bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 relative ${
-                    isVisible ? `animate-fade-in-up ${delay}` : 'opacity-0'
-                  }`}
-                >
-                  {/* Quote Mark Accent */}
-                  <div className="absolute top-6 right-6 text-7xl text-[#D4A017] opacity-10 font-serif leading-none">
-                    "
+                {/* Avatar & Info */}
+                <div className="flex items-center border-t border-gray-100 pt-6">
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center text-white font-black text-lg mr-4 transform transition-transform duration-300 flex-shrink-0"
+                    style={{ backgroundColor: testimonial.color }}
+                  >
+                    {testimonial.avatar}
                   </div>
-
-                  {/* Quote */}
-                  <p className="text-[#1C1C1C] leading-relaxed text-lg mb-6 relative z-10 italic">
-                    "{testimonial.quote}"
-                  </p>
-
-                  {/* Avatar & Info */}
-                  <div className="flex items-center border-t border-gray-100 pt-6">
-                    <div
-                      className="w-14 h-14 rounded-full flex items-center justify-center text-white font-black text-lg mr-4 transform transition-transform duration-300 flex-shrink-0"
-                      style={{ backgroundColor: testimonial.color }}
-                    >
-                      {testimonial.avatar}
-                    </div>
-                    <div>
-                      <div className="font-black text-[#1C1C1C] text-lg">{testimonial.name}</div>
-                      <div className="text-sm text-[#6B6B6B] font-semibold">{testimonial.role}</div>
-                    </div>
+                  <div>
+                    <div className="font-black text-[#1C1C1C] text-lg">{testimonial.name}</div>
+                    <div className="text-sm text-[#6B6B6B] font-semibold">{testimonial.role}</div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
+        </div>
 
-          {/* Scroll Indicator Dots */}
-          <div className="flex justify-center gap-2 mt-8 lg:hidden">
-            {testimonials.map((_, index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === currentIndex ? 'bg-[#D4A017] w-8' : 'bg-gray-300'
-                }`}
-              />
-            ))}
-          </div>
+        {/* See All Button */}
+        <div className="flex justify-center mt-12">
+          <button className="bg-white border-2 border-[#D4A017] text-[#D4A017] px-8 py-4 rounded-full font-black text-lg hover:bg-[#D4A017] hover:text-white transition-all duration-300 flex items-center gap-3 group shadow-lg hover:shadow-2xl transform hover:-translate-y-1">
+            See All Testimonials
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+          </button>
         </div>
       </div>
 

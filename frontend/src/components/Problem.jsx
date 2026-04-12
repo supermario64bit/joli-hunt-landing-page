@@ -58,9 +58,11 @@ const Problem = () => {
                   isVisible ? `animate-fade-in-up ${delay}` : 'opacity-0'
                 }`}
               >
-                {/* Mascot Illustration */}
-                <div className="flex justify-center mb-6">
-                  <Mascot variant={mascotVariants[index]} size="lg" animate={false} />
+                {/* Mascot Illustration with hover animation */}
+                <div className="flex justify-center mb-6 group">
+                  <div className="transform transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
+                    <Mascot variant={mascotVariants[index]} size="lg" animate={true} />
+                  </div>
                 </div>
                 
                 <h3 className="text-xl font-black text-[#1C1C1C] mb-4 text-center">

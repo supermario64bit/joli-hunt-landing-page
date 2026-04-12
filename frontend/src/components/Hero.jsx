@@ -4,12 +4,10 @@ import Mascot from './Mascot';
 
 const Hero = () => {
   const [counts, setCounts] = useState({ active: 0, applied: 0, scheduled: 0, offers: 0 });
-  const [hasAnimated, setHasAnimated] = useState(false);
 
   useEffect(() => {
-    // Trigger counting animation on mount
-    if (!hasAnimated) {
-      setHasAnimated(true);
+    // Start counting after a short delay
+    const startTimer = setTimeout(() => {
       const targets = { active: 42, applied: 28, scheduled: 8, offers: 3 };
       const duration = 2000;
       const steps = 60;
@@ -34,8 +32,10 @@ const Hero = () => {
       }, interval);
 
       return () => clearInterval(timer);
-    }
-  }, [hasAnimated]);
+    }, 500);
+
+    return () => clearTimeout(startTimer);
+  }, []);
 
   const scrollToSection = (href) => {
     const element = document.querySelector(href);
@@ -84,28 +84,28 @@ const Hero = () => {
               <div className="bg-white rounded-xl shadow-2xl p-6 border border-gray-200">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center p-4 bg-[#FAFAF8] rounded-lg transform hover:scale-105 transition-transform">
-                    <div className="text-3xl font-bold mb-1 text-[#D4A017] animate-scale-in">
+                    <div className="text-4xl font-black mb-1 text-[#D4A017] animate-scale-in tabular-nums">
                       {counts.active}
                     </div>
-                    <div className="text-sm text-[#6B6B6B]">Total Active</div>
+                    <div className="text-xs font-semibold text-[#6B6B6B]">Total Active</div>
                   </div>
                   <div className="text-center p-4 bg-[#FAFAF8] rounded-lg transform hover:scale-105 transition-transform delay-100">
-                    <div className="text-3xl font-bold mb-1 text-[#6B6B6B] animate-scale-in delay-100">
+                    <div className="text-4xl font-black mb-1 text-[#6B6B6B] animate-scale-in delay-100 tabular-nums">
                       {counts.applied}
                     </div>
-                    <div className="text-sm text-[#6B6B6B]">Applied</div>
+                    <div className="text-xs font-semibold text-[#6B6B6B]">Applied</div>
                   </div>
                   <div className="text-center p-4 bg-[#FAFAF8] rounded-lg transform hover:scale-105 transition-transform delay-200">
-                    <div className="text-3xl font-bold mb-1 text-[#10B981] animate-scale-in delay-200">
+                    <div className="text-4xl font-black mb-1 text-[#10B981] animate-scale-in delay-200 tabular-nums">
                       {counts.scheduled}
                     </div>
-                    <div className="text-sm text-[#6B6B6B]">Scheduled</div>
+                    <div className="text-xs font-semibold text-[#6B6B6B]">Scheduled</div>
                   </div>
                   <div className="text-center p-4 bg-[#FAFAF8] rounded-lg transform hover:scale-105 transition-transform delay-300">
-                    <div className="text-3xl font-bold mb-1 text-[#D4A017] animate-scale-in delay-300">
+                    <div className="text-4xl font-black mb-1 text-[#D4A017] animate-scale-in delay-300 tabular-nums">
                       {counts.offers}
                     </div>
-                    <div className="text-sm text-[#6B6B6B]">Offers</div>
+                    <div className="text-xs font-semibold text-[#6B6B6B]">Offers</div>
                   </div>
                 </div>
               </div>

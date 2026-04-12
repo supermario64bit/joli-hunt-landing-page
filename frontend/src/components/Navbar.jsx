@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone } from 'lucide-react';
+import { Phone, Sparkles } from 'lucide-react';
 import { navLinks } from '../data/mockData';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -40,38 +40,41 @@ const Navbar = () => {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white shadow-lg' : 'bg-white/98 backdrop-blur-md'
+      isScrolled ? 'bg-white shadow-xl border-b-2 border-[#D4A017]/20' : 'bg-white/98 backdrop-blur-md shadow-lg'
     }`}>
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          {/* Logo */}
+          {/* Logo with sparkle */}
           <div className="flex-shrink-0">
-            <button onClick={handleLogoClick} className="flex items-center group">
-              <span className="text-2xl font-black text-[#D4A017] tracking-tight group-hover:scale-105 transition-transform">JOLIHUNT</span>
+            <button onClick={handleLogoClick} className="flex items-center gap-2 group">
+              <span className="text-2xl font-black text-[#D4A017] tracking-tight group-hover:scale-105 transition-transform">
+                JOLIHUNT
+              </span>
+              <Sparkles className="w-4 h-4 text-[#D4A017] group-hover:rotate-12 transition-transform" />
             </button>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-8 bg-[#FAFAF8] px-6 py-2 rounded-full">
             {navLinks.map((link) => (
               <button
                 key={link.id}
                 onClick={() => scrollToSection(link.href)}
-                className="text-[#1C1C1C] hover:text-[#D4A017] font-semibold text-sm transition-colors duration-200 relative group"
+                className="text-[#1C1C1C] hover:text-[#D4A017] font-bold text-sm transition-all duration-200 relative group px-3 py-1"
               >
                 {link.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#D4A017] group-hover:w-full transition-all duration-300"></span>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#D4A017] group-hover:w-full transition-all duration-300 rounded-full"></span>
               </button>
             ))}
           </div>
 
           {/* Desktop Phone & CTA */}
           <div className="hidden lg:flex items-center gap-4">
-            <a href="tel:+917902498141" className="flex items-center gap-2 text-[#1C1C1C] hover:text-[#D4A017] transition-colors group">
+            <a href="tel:+917902498141" className="flex items-center gap-2 text-[#1C1C1C] hover:text-[#D4A017] transition-colors group px-4 py-2 bg-[#FAFAF8] rounded-full">
               <Phone className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-              <span className="font-semibold text-sm">+91 7902498141</span>
+              <span className="font-bold text-sm">+91 790 249 8141</span>
             </a>
-            <button className="bg-[#D4A017] text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-[#B8860B] transition-all duration-200 hover:shadow-xl transform hover:-translate-y-0.5">
+            <button className="bg-[#D4A017] text-white px-6 py-2.5 rounded-full font-black text-sm hover:bg-[#B8860B] transition-all duration-200 hover:shadow-2xl transform hover:-translate-y-0.5 hover:scale-105">
               Get Started Free
             </button>
           </div>
@@ -81,7 +84,7 @@ const Navbar = () => {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="lg:hidden p-2 text-[#1C1C1C] hover:text-[#D4A017] transition-colors"
           >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMobileMenuOpen ? '✕' : '☰'}
           </button>
         </div>
       </div>
