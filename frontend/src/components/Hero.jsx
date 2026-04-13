@@ -45,7 +45,7 @@ const Hero = () => {
   };
 
   return (
-    <section id="hero" className="pt-20 pb-12 bg-[#FAFAF8] relative overflow-hidden">
+    <section id="hero" className="pt-28 pb-12 bg-[#FAFAF8] relative overflow-hidden">
       {/* Animated background pattern */}
       <div className="absolute inset-0 opacity-30 animate-pulse">
         <div className="absolute inset-0" style={{
@@ -55,7 +55,7 @@ const Hero = () => {
       </div>
 
       {/* Floating mascot - positioned lower, hidden on mobile to prevent overlap */}
-      <div className="hidden md:block absolute top-20 right-5 lg:top-24 lg:right-10 w-32 h-44 lg:w-40 lg:h-56 z-20 opacity-95 animate-float">
+      <div className="hidden md:block absolute top-32 right-5 lg:top-36 lg:right-10 w-32 h-44 lg:w-40 lg:h-56 z-20 opacity-95 animate-float">
         <Mascot animate={true} size="xl" />
       </div>
 
