@@ -46,12 +46,25 @@ const Hero = () => {
 
   return (
     <section id="hero" className="pt-28 pb-12 bg-[#FAFAF8] relative overflow-hidden">
-      {/* Animated background pattern */}
-      <div className="absolute inset-0 opacity-30 animate-pulse">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 2px 2px, #D4A017 1px, transparent 1px)`,
-          backgroundSize: '40px 40px'
-        }} />
+      {/* Background Image with Overlay */}
+      <div className="absolute inset-0 z-0">
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1758876022213-fbf6e54ad52e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTJ8MHwxfHNlYXJjaHwyfHxtb2Rlcm4lMjBvZmZpY2UlMjB3b3Jrc3BhY2UlMjBsYXB0b3AlMjBwcm9mZXNzaW9uYWx8ZW58MHx8fHwxNzc2MTAxMTMzfDA&ixlib=rb-4.1.0&q=85')`,
+            filter: 'blur(3px) brightness(1.1)',
+            transform: 'scale(1.1)'
+          }}
+        />
+        {/* White overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/90 to-white/85" />
+        {/* Subtle dot pattern */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, #D4A017 1px, transparent 1px)`,
+            backgroundSize: '40px 40px'
+          }} />
+        </div>
       </div>
 
       {/* Floating mascot - positioned lower, hidden on mobile to prevent overlap */}
