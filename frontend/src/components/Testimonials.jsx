@@ -51,7 +51,7 @@ const Testimonials = () => {
   }, [isPaused]);
 
   return (
-    <section id="testimonials" ref={sectionRef} className="py-16 lg:py-24 bg-[#FAFAF8] relative overflow-hidden">
+    <section id="testimonials" ref={sectionRef} className="py-12 bg-[#FAFAF8] relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
@@ -63,13 +63,13 @@ const Testimonials = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-12 lg:mb-16">
-          <h2 className={`text-3xl md:text-4xl lg:text-5xl font-black text-[#1C1C1C] mb-4 ${
+        <div className="text-center mb-10">
+          <h2 className={`text-2xl md:text-3xl lg:text-4xl font-bold text-[#1C1C1C] mb-3 ${
             isVisible ? 'animate-fade-in-up' : 'opacity-0'
           }`}>
             Real <span className="text-[#D4A017]">Stories</span>
           </h2>
-          <p className={`text-lg text-[#6B6B6B] max-w-2xl mx-auto ${
+          <p className={`text-base text-[#6B6B6B] max-w-2xl mx-auto leading-relaxed ${
             isVisible ? 'animate-fade-in-up delay-100' : 'opacity-0'
           }`}>
             See how job seekers like you are landing their dream roles with JoliHunt

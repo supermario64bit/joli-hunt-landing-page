@@ -43,23 +43,23 @@ const Features = () => {
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
         {/* Heading with underline decoration */}
-        <div className="text-center mb-12 lg:mb-20">
-          <div className="inline-flex items-center gap-3 mb-4">
-            <Zap className="w-8 h-8 text-[#D4A017] animate-pulse" />
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-[#1C1C1C] animate-fade-in-up">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-3 mb-3">
+            <Zap className="w-6 h-6 text-[#D4A017] animate-pulse" />
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1C1C1C] animate-fade-in-up">
               Everything your job search needs
             </h2>
-            <Zap className="w-8 h-8 text-[#D4A017] animate-pulse" />
+            <Zap className="w-6 h-6 text-[#D4A017] animate-pulse" />
           </div>
           {/* Decorative underline */}
           <div className="flex justify-center gap-2 items-center">
-            <div className="h-1 w-20 bg-gradient-to-r from-transparent to-[#D4A017] rounded-full"></div>
-            <div className="h-1.5 w-32 bg-[#D4A017] rounded-full"></div>
-            <div className="h-1 w-20 bg-gradient-to-l from-transparent to-[#D4A017] rounded-full"></div>
+            <div className="h-1 w-16 bg-gradient-to-r from-transparent to-[#D4A017] rounded-full"></div>
+            <div className="h-1 w-24 bg-[#D4A017] rounded-full"></div>
+            <div className="h-1 w-16 bg-gradient-to-l from-transparent to-[#D4A017] rounded-full"></div>
           </div>
         </div>
 
-        <div className="space-y-20 lg:space-y-32">
+        <div className="space-y-16">
           {features.map((feature, index) => {
             const isLeft = feature.position === 'left';
             const isVisible = visibleFeatures.includes(index);
@@ -68,23 +68,23 @@ const Features = () => {
               <div
                 key={feature.id}
                 ref={el => featureRefs.current[index] = el}
-                className={`grid lg:grid-cols-2 gap-8 lg:gap-12 items-center ${
+                className={`grid lg:grid-cols-2 gap-6 lg:gap-10 items-center ${
                   index % 2 === 0 ? '' : 'lg:flex-row-reverse'
                 }`}
               >
                 {/* Text Content with gradient background */}
-                <div className={`${isLeft ? 'lg:order-1' : 'lg:order-2'} ${!isLeft ? 'lg:pl-8' : 'lg:pr-8'} ${
+                <div className={`${isLeft ? 'lg:order-1' : 'lg:order-2'} ${!isLeft ? 'lg:pl-6' : 'lg:pr-6'} ${
                   isVisible ? (isLeft ? 'animate-slide-in-left' : 'animate-slide-in-right') : 'opacity-0'
                 } relative`}>
                   {/* Gradient bg card */}
-                  <div className="bg-gradient-to-br from-white to-[#FAFAF8] p-8 rounded-2xl border-2 border-[#D4A017]/10 hover:border-[#D4A017]/30 transition-all duration-300 hover:shadow-xl">
-                    <div className="inline-block bg-[#D4A017] text-white px-4 py-1 rounded-full text-sm font-bold mb-4">
+                  <div className="bg-gradient-to-br from-white to-[#FAFAF8] p-6 rounded-2xl border-2 border-[#D4A017]/10 hover:border-[#D4A017]/30 transition-all duration-300 hover:shadow-xl">
+                    <div className="inline-block bg-[#D4A017] text-white px-3 py-1 rounded-full text-xs font-semibold mb-3">
                       Feature {index + 1}
                     </div>
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-[#1C1C1C] mb-4 lg:mb-6">
+                    <h3 className="text-xl md:text-2xl font-bold text-[#1C1C1C] mb-3">
                       {feature.title}
                     </h3>
-                    <p className="text-lg text-[#6B6B6B] leading-relaxed">
+                    <p className="text-base text-[#6B6B6B] leading-relaxed">
                       {feature.description}
                     </p>
                     {/* Decorative dots */}

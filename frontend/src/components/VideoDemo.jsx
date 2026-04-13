@@ -5,7 +5,7 @@ const VideoDemo = () => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   return (
-    <section className="py-16 lg:py-24 bg-white relative overflow-hidden">
+    <section className="py-12 bg-[#FAFAF8] relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
