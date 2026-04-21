@@ -17,7 +17,7 @@ const LandingPage = () => {
       <SEO />
       <Navbar />
       <Hero />
-      <VideoDemo />
+      {/* <VideoDemo /> */}
       <Problem />
       <Features />
       <Testimonials />
