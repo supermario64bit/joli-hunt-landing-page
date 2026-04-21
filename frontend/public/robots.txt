@@ -4,7 +4,7 @@ Allow: /
 Disallow: /admin/
 
 # Sitemap
-Sitemap: https://jolihunt-preview.preview.emergentagent.com/sitemap.xml
+Sitemap: https://jolihunt.com/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 1

@@ -5,8 +5,8 @@ const SEO = ({
   title = "JoliHunt - Job Application Tracker | Organize Your Job Search",
   description = "Track job applications, never miss interviews, and land your dream job faster. JoliHunt helps you organize your entire job search in one place. Free job tracker app for job seekers.",
   keywords = "job tracker, job application tracker, job search organizer, resume tracker, interview tracker, job hunt app, career tracker, application management, job search tool, employment tracker, job board tracker, job application spreadsheet alternative, job hunting software, career management tool, job search manager",
-  ogImage = "https://jolihunt-preview.preview.emergentagent.com/og-image.jpg",
-  url = "https://jolihunt-preview.preview.emergentagent.com",
+  ogImage = "https://jolihunt.com/og-image.jpg",
+  url = "https://jolihunt.com",
   type = "website"
 }) => {
   return (
