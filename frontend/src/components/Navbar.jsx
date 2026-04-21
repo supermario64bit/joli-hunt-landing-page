@@ -74,9 +74,14 @@ const Navbar = () => {
               <Phone className="w-4 h-4 group-hover:rotate-12 transition-transform" />
               <span className="font-bold text-sm">+91 790 249 8141</span>
             </a>
-            <button className="bg-[#D4A017] text-white px-6 py-2.5 rounded-full font-black text-sm hover:bg-[#B8860B] transition-all duration-200 hover:shadow-2xl transform hover:-translate-y-0.5 hover:scale-105">
+            <a
+              href="https://app.jolihunt.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#D4A017] text-white px-6 py-2.5 rounded-full font-black text-sm hover:bg-[#B8860B] transition-all duration-200 hover:shadow-2xl transform hover:-translate-y-0.5 hover:scale-105 inline-block"
+            >
               Get Started Free
-            </button>
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -110,9 +115,14 @@ const Navbar = () => {
             </a>
           </div>
           <div className="mt-8">
-            <button className="w-full bg-[#D4A017] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#B8860B] transition-all duration-200 shadow-lg">
+            <a
+              href="https://app.jolihunt.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-[#D4A017] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#B8860B] transition-all duration-200 shadow-lg inline-block text-center"
+            >
               Get Started Free
-            </button>
+            </a>
           </div>
         </div>
       </div>

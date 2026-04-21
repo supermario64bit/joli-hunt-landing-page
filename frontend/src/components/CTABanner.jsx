@@ -60,26 +60,16 @@ const CTABanner = () => {
           Join thousands of job seekers who are organizing their applications and landing offers faster.
         </p>
 
-        {/* Newsletter Signup Form */}
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-6">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="flex-1 px-6 py-4 rounded-lg text-[#1C1C1C] placeholder-[#6B6B6B] focus:outline-none focus:ring-2 focus:ring-white"
-              disabled={isSubmitting}
-            />
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-white text-[#D4A017] px-8 py-4 rounded-lg font-bold hover:bg-[#FAFAF8] transition-all duration-200 hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-            >
-              {isSubmitting ? 'Signing up...' : 'Get Started Free'}
-            </button>
-          </div>
-        </form>
+        <div className="flex justify-center animate-fade-in-up">
+          <a
+            href="https://app.jolihunt.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white text-[#D4A017] px-10 py-5 rounded-xl font-black text-xl hover:bg-[#FAFAF8] transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1.5 hover:scale-105 inline-block"
+          >
+            Get Started Free
+          </a>
+        </div>
 
         <p className="text-white/80 text-sm">
           No credit card required · Free forever plan available

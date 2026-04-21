@@ -154,12 +154,14 @@ const BlogPostPage = () => {
           <p className="text-lg mb-6 opacity-90">
             Join thousands of job seekers who are landing more interviews with JoliHunt
           </p>
-          <button
-            onClick={() => navigate('/')}
-            className="bg-white text-[#D4A017] px-8 py-4 rounded-lg font-black text-lg hover:shadow-xl transition-all transform hover:-translate-y-1"
+          <a
+            href="https://app.jolihunt.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white text-[#D4A017] px-8 py-4 rounded-lg font-black text-lg hover:shadow-xl transition-all transform hover:-translate-y-1 inline-block"
           >
             Start Tracking - It's Free
-          </button>
+          </a>
         </div>
       </div>
 
